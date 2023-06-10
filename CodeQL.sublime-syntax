@@ -1,0 +1,328 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/syntax.html
+name: Code QL
+file_extensions:
+  - ql
+  - qll
+variables:
+  bin_digit: "[01]"
+  oct_digit: "[0-7]"
+  dec_digit: '\d'
+  hex_digit: '\h'
+  identifier: \b[[:alpha:]_][[:alnum:]_]*\b
+  variable-defined: '\w[a-zA-Z0-9]+'
+scope: source.ql
+
+contexts:
+  main:
+    - include: annotation
+  annotation:
+    - include: bindingset-annotation
+    - include: language-annotation
+    - include: pragma-annotation
+    - include: annotation-keyword
+    - include: string
+    - include: comment
+    - include: keyword
+    - include: types
+    - include: constant
+    - include: variable
+    - include: function
+    - include: operator-or-punctuation
+  annotation-keyword:
+    - include: abstract
+    - include: bindingset
+    - include: cached
+    - include: deprecated
+    - include: external
+    - include: final
+    - include: language
+    - include: library
+    - include: override
+    - include: pragma
+    - include: private
+    - include: query
+    - include: signature
+    - include: transient
+  keyword:
+    - include: keyword-any
+    - include: keyword-as
+    - include: keyword-asc
+    - include: keyword-none
+    - include: keyword-and
+    - include: keyword-bindingset
+    - include: keyword-and
+    - include: keyword-in
+    - include: keyword-or
+    - include: keyword-else
+    - include: keyword-extends
+    - include: keyword-concat
+    - include: keyword-sum
+    - include: keyword-none
+    - include: keyword-import
+    - include: keyword-implies
+    - include: keyword-then
+    - include: keyword-pragma
+    - include: keyword-none
+    - include: keyword-newtype
+    - include: keyword-predicate
+    - include: keyword-pipe
+    - include: keyword-import
+    - include: keyword-class
+    - include: avg
+    - include: keyword-forall
+    - include: keyword-forex
+    - include: keyword-select
+    - include: keyword-from
+    - include: keyword-where
+    - include: arithmetic-operator
+    - include: operator
+  variable:
+    - include: dont-care
+    - include: variable-this
+    - include: variable-super
+  constant:
+    - include: constant-boolean
+  module-member:
+    - include: import-directive
+    - include: import-as-clause
+    - include: module-declaration
+    - include: newtype-declaration
+    - include: newtype-branch-name-with-prefix
+    - include: predicate-parameter-list
+    - include: predicate-body
+    - include: class-declaration
+    - include: select-clause
+    - include: predicate-or-field-declaration
+    - include: non-context-sensitive
+    - include: annotation
+  operator-or-punctuation:
+    - include: relational-operator
+    - include: comparison-operator
+    - include: arithmetic-operator
+    - include: comma
+    - include: semicolon
+    - include: dot
+    - include: dotdot
+    - include: pipe
+    - include: open-paren
+    - include: close-paren
+    - include: open-brace
+    - include: close-brace
+    - include: open-bracket
+    - include: close-bracket
+  predicate-start-keyword:
+    - include: boolean
+    - include: date
+    - include: float
+    - include: int
+    - include: predicate
+    - include: string
+  types:
+    - match: \b(?x:boolean)\b
+      scope: support.type.boolean.ql
+    - match: \b(?x:string)\b
+      scope: support.type.string.ql
+    - match: \b(?x:int)\b
+      scope: support.type.int.ql
+    - match: \b(?x:float)\b
+      scope: support.type.float.ql
+    - match: \b(?x:date)\b
+      scope: support.type.date.ql
+  comment:
+    - include: comment-block
+    - include: comment-line
+  comment-block:
+    - match: /\*\*
+      scope: punctuation.definition.comment.begin.ql
+      push:
+        - meta_scope: comment.block.documentation.ql
+        - match: \*/
+          scope: punctuation.definition.comment.end.ql
+          pop: true
+  comment-line:
+    - match: (//)
+      scope: punctuation.definition.comment.begin.ql
+      push:
+        - meta_scope: comment.line.double-slash.ql
+        - match: $
+          pop: true
+  string:
+    - match: (")
+      scope: punctuation.definition.string.begin.ql
+      push:
+        - meta_scope: string.quoted.double.ql
+        - match: (")
+          scope: punctuation.definition.string.end.ql
+          pop: true
+        - include: string-escape
+  constant-boolean:
+    - match: \b(true|false)\b
+      scope: constant.language.boolean.ql
+  keyword-any:
+    - match: (?x)\b(?:any)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.quantifier.any.ql
+  arithmetic-operator:
+    - match: \+|-|\*|/|%
+      scope: keyword.operator.arithmetic.ql
+  comparison-operator:
+    - match: =|\!\=
+      scope: keyword.operator.comparison.ql
+  keyword-as:
+    - match: (?x)\b(?:as)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.other.as.ql
+  keyword-asc:
+    - match: (?x)\b(?:asc)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.order.asc.ql
+  at-lower-id:
+    - match: (?x)@[a-z][0-9A-Za-z_]* (?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.other.ql
+  avg:
+    - match: (?x)\b(?:avg)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.aggregate.avg.ql
+  keyword-bindingset:
+    - match: (?x)\b(?:bindingset)(?:(?!(?:[0-9A-Za-z_])))
+      scope: storage.modifier.bindingset.ql
+  keyword-none:
+    - match: (?x)\b(?:none)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.quantifier.none.ql
+  keyword-and:
+    - match: \b(and)\b
+      scope: keyword.other.and.ql
+  dont-care:
+    - match: \b(_)
+      scope: variable.language.dont-care.ql
+  keyword-implies:
+    - match: \b(implies)\b
+      scope: keyword.other.ql
+  keyword-import:
+    - match: \b(import)\b
+      scope: keyword.import.ql
+  keyword-in:
+    - match: \b(in)\b
+      scope: keyword.other.in.ql
+  language:
+    - match: (language)
+      scope: storage.modifier.language.ql
+  override:
+    - match: (?x)\b(?:override)(?:(?!(?:[0-9A-Za-z_])))
+      scope: storage.modifier.override.ql
+  type-string:
+    - match: (?x)\b(?:string)(?:(?!(?:[0-9A-Za-z_])))
+      scope: support.type.string.ql
+  string-escape:
+    - match: (?x)\\["\\nrt]
+      scope: constant.character.escape.ql
+  keyword-sum:
+    - match: (?x)\b(?:sum)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.aggregate.sum.ql
+  keyword-select:
+    - match: \b(select)\b
+      scope: keyword.control.conditional.select.ql
+  variable-super:
+    - match: (?x)\b(?:super)(?:(?!(?:[0-9A-Za-z_])))
+      scope: variable.language.super.ql
+  keyword-then:
+    - match: (?x)\b(?:then)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.other.then.ql
+  variable-this:
+    - match: (?x)\b(?:this)(?:(?!(?:[0-9A-Za-z_])))
+      scope: variable.language.this.ql
+  keyword-concat:
+    - match: (?x)\b(?:concat)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.aggregate.concat.ql
+  keyword-count:
+    - match: (?x)\b(?:count)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.aggregate.count.ql
+  date:
+    - match: (?x)\b(?:date)(?:(?!(?:[0-9A-Za-z_])))
+      scope: support.type.date.ql
+  keyword-deprecated:
+    - match: (?x)\b(?:deprecated)(?:(?!(?:[0-9A-Za-z_])))
+      scope: storage.modifier.deprecated.ql
+  keyword-desc:
+    - match: (?x)\b(?:desc)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.order.desc.ql
+  dot:
+    - match: (?x)\.
+      scope: punctuation.accessor.ql
+  dotdot:
+    - match: (?x)\.\.
+      scope: punctuation.operator.range.ql
+  keyword-else:
+    - match: (?x)\b(?:else)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.other.else.ql
+  keyword-transient:
+    - match: (?x)\b(?:transient)(?:(?!(?:[0-9A-Za-z_])))
+      scope: storage.modifier.transient.ql
+  keyword-unique:
+    - match: (?x)\b(?:unique)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.aggregate.unique.ql
+  upper-id:
+    - match: (?x)\b [A-Z][0-9A-Za-z_]* (?:(?!(?:[0-9A-Za-z_])))
+  keyword-where:
+    - match: (?x)\b(?:where)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.query.where.ql
+  keyword-predicate:
+    - match: (?x)\b(?:predicate)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.other.predicate.ql
+  keyword-or:
+    - match: (?x)\b(?:or)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.other.or.ql
+  keyword-order:
+    - match: (?x)\b(?:order)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.order.order.ql
+  keyword-pipe:
+    - match: (?x)\|
+      scope: keyword.operator.pipe.ql
+  keyword-pragma:
+    - match: (?x)\b(?:pragma)(?:(?!(?:[0-9A-Za-z_])))
+      scope: storage.modifier.pragma.ql
+  keyword-extends:
+    - match: (?x)\b(?:extends)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.other.extends.ql
+  keyword-forall:
+    - match: (?x)\b(?:forall)
+      scope: keyword.quantifier.forall.ql
+  keyword-forex:
+    - match: (?x)\b(?:forex)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.quantifier.forex.ql
+  keyword-from:
+    - match: (?x)\b(?:from)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.import.from.ql
+
+  keyword-class:
+    - match: (?x)\b(?:class)\b
+      scope: keyword.declaration.class.ql
+  keyword-newtype:
+    - match: (?x)\b(?:newtype)(?:(?!(?:[0-9A-Za-z_])))
+      scope: keyword.other.newtype.ql
+  open-bracket:
+    - match: \[
+      scope: punctuation.section.brackets.begin.ql
+  close-bracket:
+    - match: \]
+      scope: punctuation.section.brackets.end.ql
+  open-paren:
+    - match: \(
+      scope: punctuation.section.parens.begin.ql
+  close-paren:
+    - match: \)
+      scope: punctuation.section.parens.end.ql
+  predicate-body:
+    - match: \{
+      scope: punctuation.section.block.begin.ql
+      push:
+        - meta_scope: meta.block.ql
+        - match: \}
+          scope: punctuation.section.block.end.ql
+          pop: true
+  function:
+    - include: function-defined
+  function-defined:
+    - match: '{{identifier}}\s*(?=\()'
+      scope: meta.function.ql entity.name.function.ql
+  relational-operator:
+    - match: <=|<|>=|>
+      scope: keyword.operator.relational.ql
