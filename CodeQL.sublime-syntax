@@ -8,8 +8,8 @@ file_extensions:
 variables:
   bin_digit: "[01]"
   oct_digit: "[0-7]"
-  dec_digit: '\d'
-  hex_digit: '\h'
+  hex_digits: '[\-](?:0[xX]\h*)'
+  dec_digits: '(?:\d*)'
   identifier: \b[[:alpha:]_][[:alnum:]_]*\b
   variable-defined: '\w[a-zA-Z0-9]+'
 scope: source.ql
@@ -30,6 +30,8 @@ contexts:
     - include: variable
     - include: function
     - include: operator-or-punctuation
+    - include: class-defined
+    - include: number
   annotation-keyword:
     - include: abstract
     - include: bindingset
@@ -130,6 +132,11 @@ contexts:
       scope: support.type.float.ql
     - match: \b(?x:date)\b
       scope: support.type.date.ql
+  number:
+    - match: ({{hex_digits}})
+      scope: constant.numeric.value.ql meta.number.integer.hexadecimal.ql
+    - match: ({{dec_digits}})
+      scope: constant.numeric.value.ql meta.number.integer.decimal.ql
   comment:
     - include: comment-block
     - include: comment-line
@@ -296,7 +303,7 @@ contexts:
     - match: (?x)\b(?:class)\b
       scope: keyword.declaration.class.ql
   keyword-newtype:
-    - match: (?x)\b(?:newtype)(?:(?!(?:[0-9A-Za-z_])))
+    - match: (?x)\b(?:newtype)\b
       scope: keyword.other.newtype.ql
   open-bracket:
     - match: \[
@@ -304,12 +311,14 @@ contexts:
   close-bracket:
     - match: \]
       scope: punctuation.section.brackets.end.ql
+      pop: true
   open-paren:
     - match: \(
       scope: punctuation.section.parens.begin.ql
   close-paren:
     - match: \)
       scope: punctuation.section.parens.end.ql
+      pop: true
   predicate-body:
     - match: \{
       scope: punctuation.section.block.begin.ql
@@ -323,6 +332,12 @@ contexts:
   function-defined:
     - match: '{{identifier}}\s*(?=\()'
       scope: meta.function.ql entity.name.function.ql
-  relational-operator:
-    - match: <=|<|>=|>
-      scope: keyword.operator.relational.ql
+  class-defined:
+    - match: \b(class)\b
+      scope: keyword.declaration.interface.ql
+      push:
+        - match: ({{identifier}})
+          scope: entity.name.class.ql meta.class.ql
+          pop: true
+      pop: true
+
